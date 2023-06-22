@@ -5,17 +5,21 @@ config = dotenv_values(".env")
 
 openai.api_key = config["OPENAI_API_KEY"]
 
+messages = []
+
 while True:
     try:
         user_input = input("You: ")
+        messages.append({"role": "user", "content": user_input})
+
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "user", "content": user_input}
-            ]
+            model = "gpt-3.5-turbo",
+            messages = messages
         )
 
-        print(response["choices"][0]["message"])
+        messages.append(response["choices"][0]["message"].to_dict())
+
+        print("Assistant: ", response["choices"][0]["message"]["content"])
 
     except KeyboardInterrupt:
         print("Exiting...")
